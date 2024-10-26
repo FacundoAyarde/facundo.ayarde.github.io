@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuidado Responsable de Mascotas - Tupiza</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.2.0/dist/cdn.min.js" defer></script>
+    <style>
+        .floating {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 3s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        main {
+            min-height: 100vh;
+        }
+
+        /* Estilo para el menú fijo */
+        .fixed-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+
+        /* Contenedor de la tarjeta */
+        .image-container {
+            perspective: 1000px;
+            /* Añade perspectiva para el efecto 3D */
+        }
+
+        /* Estilos generales para la tarjeta */
+        .image-card {
+            width: 100%;
+            height: 50%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            /* Mantiene el efecto 3D */
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para la tarjeta en su estado volteado */
+        .rotated .image-card {
+            transform: rotateY(180deg);
+            /* Rotación en el eje Y */
+        }
+
+        /* Caras de la tarjeta (frontal y trasera) */
+        .image-front,
+        .image-back {
+            width: 100%;
+            height: 50%;
+            backface-visibility: hidden;
+            /* Oculta la cara trasera cuando no está visible */
+        }
+
+        /* Cara frontal */
+        .image-front {
+            background-color: white;
+            z-index: 2;
+            /* Para que aparezca sobre la trasera */
+            transform: rotateY(0deg);
+            /* Posición inicial de la parte frontal */
+        }
+
+        /* Cara trasera */
+        .image-back {
+            background-color: white;
+            transform: rotateY(180deg);
+            /* Posición inicial de la parte trasera */
+        }
+
+        .image-card img {
+            width: 100%;
+            /* Ancho completo */
+            height: 250px;
+            /* Altura fija */
+            object-fit: cover;
+            /* Recorta la imagen para que llene el espacio */
+            border-radius: 0.5rem;
+            /* Bordes redondeados */
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-yellow-200 to-blue-300 relative">
+    <!-- Puntos flotantes -->
+    <div id="floating-points" class="absolute inset-0 pointer-events-none"></div>
+
+    <header class="bg-purple-600 text-white p-4 text-center rounded-lg shadow-lg z-10">
+        <h1 class="text-4xl font-bold">Cuidado Responsable de Mascotas</h1>
+        <p class="mt-2 text-lg">Educando a nuestros niños en Tupiza</p>
+    </header>
+
+    <!-- Menú de Navegación -->
+    <nav x-data="{ open: false, scrollPosition: 0 }" @scroll.window="scrollPosition = window.scrollY"
+        class="bg-purple-500 p-4 mt-4 rounded-lg shadow-lg z-20" :class="{'fixed-menu': scrollPosition > 0}">
+        <div class="flex justify-between items-center">
+            <div class="text-white font-semibold text-xl">Menú</div>
+            <button @click="open = !open" class="text-white focus:outline-none md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <ul :class="{'hidden': !open, 'block': open}" class="md:flex md:space-x-4 mt-2 md:mt-0">
+            <li><a href="#inicio" class="block text-white hover:underline hover:text-yellow-300">Inicio</a></li>
+            <li><a href="#mascotas" class="block text-white hover:underline hover:text-yellow-300">Mascotas</a></li>
+            <li><a href="#cuidados" class="block text-white hover:underline hover:text-yellow-300">Cuidados
+                    Específicos</a></li>
+            </li>
+            <li><a href="#videos" class="block text-white hover:underline hover:text-yellow-300">Videos y
+                    Animaciones</a></li>
+            <li><a href="#historias" class="block text-white hover:underline hover:text-yellow-300">Historias</a></li>
+            <li><a href="#recursos" class="block text-white hover:underline hover:text-yellow-300">Recursos para
+                    Padres</a></li>
+        </ul>
+    </nav>
+    <div class="relative mt-4 overflow-hidden">
+        <div class="flex transition-transform duration-500" id="carousel">
+            <div class="min-w-full">
+                <img src="./img/los-cuidados-de-las-mascotas.jpg" alt="Imagen 1"
+                    class="w-full h-auto rounded-lg shadow-lg">
+            </div>
+            <div class="min-w-full">
+                <img src="./img/Mascotas-cuidados.jpg" alt="Imagen 2" class="w-full h-auto rounded-lg shadow-lg">
+            </div>
+            <div class="min-w-full">
+                <img src="./img/Mascotas-los-cuidados.jpg" alt="Imagen 3" class="w-full h-auto rounded-lg shadow-lg">
+            </div>
+        </div>
+        <button id="prev"
+            class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-purple-600 rounded-full p-2 shadow-lg">❮</button>
+        <button id="next"
+            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-purple-600 rounded-full p-2 shadow-lg">❯</button>
+    </div>
+
+
+    <main class="container mx-auto my-8 p-4 bg-white rounded-lg shadow-lg z-10 relative">
+
+        <section id="inicio" class="mb-6">
+            <h2 class="text-2xl font-semibold mb-2 text-purple-600">Bienvenida</h2>
+            <p class="text-gray-700 text-justify">
+                ¡Bienvenidos a nuestra página educativa sobre el cuidado de mascotas! Aquí aprenderás de manera
+                divertida cómo cuidar a tus amigos peludos, emplumados o aletas.
+            </p>
+            <img src="./img/bienvenida.jpg" alt="Bienvenida a la página" class="w-full h-auto rounded-lg shadow-lg">
+
+        </section>
+
+        <section id="mascotas" class="mb-10">
+            <h2 class="text-3xl font-semibold mb-6 text-purple-600 text-center">Mascotas</h2>
+            <p class="text-gray-700 text-center mb-6">
+                Descubre los diferentes tipos de mascotas que existen y lo que las hace especiales.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Perro -->
+                <div class="image-container" data-animal="perro">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Perro</p>
+                            <img src="./img/perro.jpg" alt="Perro">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('perro')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Proporcionar una dieta equilibrada.</li>
+                                <li>- Llevar al veterinario regularmente.</li>
+                                <li>- Mantener una rutina de ejercicios.</li>
+                                <li>- Asegurar una higiene adecuada.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('perro')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gato -->
+                <div class="image-container" data-animal="gato">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Gato</p>
+                            <img src="./img/gatito.jpg" alt="Gato">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('gato')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Proporcionar una dieta adecuada.</li>
+                                <li>- Mantener su arenero limpio.</li>
+                                <li>- Proporcionar juguetes para estimulación mental.</li>
+                                <li>- Revisiones regulares con el veterinario.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('gato')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pez -->
+                <div class="image-container" data-animal="pez">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Pez</p>
+                            <img src="./img/pez.jpg" alt="Pez">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('pez')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Mantener el acuario limpio.</li>
+                                <li>- Controlar la temperatura del agua.</li>
+                                <li>- Alimentar adecuadamente.</li>
+                                <li>- Revisar la calidad del agua.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('pez')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loro -->
+                <div class="image-container" data-animal="loro">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Loro</p>
+                            <img src="./img/pajaro.jpg" alt="Loro">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('loro')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Proveer una jaula espaciosa.</li>
+                                <li>- Alimentar con frutas y vegetales.</li>
+                                <li>- Proporcionar juguetes para estímulo.</li>
+                                <li>- Sacarlo para socializar diariamente.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('loro')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conejo -->
+                <div class="image-container" data-animal="conejo">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Conejo</p>
+                            <img src="./img/conejo.jpg" alt="Conejo">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('conejo')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Proveer una jaula grande.</li>
+                                <li>- Alimentación variada: heno, vegetales.</li>
+                                <li>- Asegurar agua fresca diariamente.</li>
+                                <li>- Espacio para moverse fuera de la jaula.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('conejo')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hámster -->
+                <div class="image-container" data-animal="hamster">
+                    <div class="image-card">
+                        <div class="image-front">
+                            <p class="text-center font-bold text-xl mb-4">Hámster</p>
+                            <img src="./img/hamster.jpg" alt="Hámster">
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700"
+                                onclick="toggleCard('hamster')">Ver cuidados</button>
+                        </div>
+                        <div class="image-back">
+                            <ul class="text-left p-4">
+                                <li>- Proveer una jaula adecuada.</li>
+                                <li>- Ofrecer una dieta balanceada.</li>
+                                <li>- Agua limpia diariamente.</li>
+                                <li>- Juguetes y rueda para ejercicio.</li>
+                            </ul>
+                            <button class="bg-purple-600 text-white px-4 py-2 w-full rounded hover:bg-purple-700 mt-4"
+                                onclick="toggleCard('hamster')">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section id="cuidados" class="mb-6 flex flex-col md:flex-row">
+            <div class="md:w-1/2 mb-4 md:mb-0">
+                <img src="./img/cuidado_especifico.jpg" alt="Cuidados específicos"
+                    class="w-full h-auto rounded shadow-md">
+            </div>
+            <div class="md:w-1/2 md:pl-6">
+                <h2 class="text-2xl font-semibold mb-2 text-purple-600">Cuidados Específicos</h2>
+                <h3 class="text-xl font-semibold mb-2">Alimentación</h3>
+                <p class="text-gray-700">Asegúrate de conocer qué alimentos son saludables para tu mascota.</p>
+                <h3 class="text-xl font-semibold mb-2">Ejercicio</h3>
+                <p class="text-gray-700">Aquí encontrarás sugerencias para mantener a tus mascotas activas.</p>
+                <h3 class="text-xl font-semibold mb-2">Higiene</h3>
+                <p class="text-gray-700">Consejos sobre el baño y cuidado de su higiene dental.</p>
+                <h3 class="text-xl font-semibold mb-2">Salud</h3>
+                <p class="text-gray-700">Todo sobre vacunaciones y visitas al veterinario.</p>
+            </div>
+        </section>
+
+        <section id="videos" class="mb-6">
+            <div class="bg-gray-100 py-10 px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                  <h1 class="text-3xl font-bold text-blue-700 mb-4">Videos y Animaciones</h1>
+                  <p class="text-gray-700 mb-8">Mira nuestros tutoriales y animaciones educativas.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/cuidar-mascotas-casa.jpg" alt="Miniatura del video 1">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">Cómo cuidar a tu mascota en casa</h2>
+                    <p class="text-gray-600 mt-2">Aprende los conceptos básicos para mantener a tu mascota feliz y saludable.</p>
+                    <a href="https://www.youtube.com/watch?v=28FtTF9Z_7s" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+              
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/perros.jpg" alt="Miniatura del video 2">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">La importancia del ejercicio para mascotas</h2>
+                    <p class="text-gray-600 mt-2">Descubre actividades que mantendrán a tu mascota activa y saludable.</p>
+                    <a href="https://www.youtube.com/shorts/hO0xfUp5Dfk" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+              
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/05.-Max-La-sirenita.jpg" alt="Miniatura del video 3">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">Animación: La aventura de Max el perro</h2>
+                    <p class="text-gray-600 mt-2">Una animación educativa sobre los cuidados básicos de un perro.</p>
+                    <a href="https://www.youtube.com/watch?v=HTp15J1YbGY" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+              
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/perro_imagen1.jpg" alt="Miniatura del video 4">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">Cómo alimentar a tu gato adecuadamente</h2>
+                    <p class="text-gray-600 mt-2">Consejos y trucos sobre la alimentación saludable de gatos.</p>
+                    <a href="https://www.youtube.com/watch?v=gAw9lnyd4pc" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+              
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/los_perritos.jpg" alt="Miniatura del video 5">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">Animación: Un día en la vida de una mascota</h2>
+                    <p class="text-gray-600 mt-2">Explora las actividades diarias de una mascota en esta divertida animación.</p>
+                    <a href="https://www.youtube.com/watch?v=LA5mgVVtHME" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+              
+                  <!-- Video Card -->
+                  <div class="bg-white rounded-lg shadow-lg p-4">
+                    <div class="relative">
+                      <img class="rounded-lg" src="./img/perrodeporte-908x454.png" alt="Miniatura del video 6">
+                    </div>
+                    <h2 class="text-xl font-bold text-blue-700 mt-4">Cuidado veterinario básico para mascotas</h2>
+                    <p class="text-gray-600 mt-2">Guía sobre el cuidado veterinario que cada mascota necesita regularmente.</p>
+                    <a href="https://www.youtube.com/watch?v=fUljVxj795c" target="_blank" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                      Ver Video
+                    </a>
+                  </div>
+                </div>
+              </div>              
+        </section>
+
+        <section id="historias" class="mb-6">
+            <h2 class="text-2xl font-semibold mb-2 text-purple-600">Historias</h2>
+            <p class="text-gray-700">Lee cuentos cortos sobre mascotas y sus aventuras.</p>
+            <main class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+                <!-- Tarjeta de cuento -->
+                <!-- Tarjetas de cuentos -->
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">La gran travesía de Rocky, el perrito aventurero</h2>
+                    <p class="text-gray-600 mt-2">
+                        Rocky, un perrito intrépido, se escapó de casa para explorar el parque cercano, donde descubrió
+                        un túnel oculto...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Rocky')">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">El misterio de Bella, la perrita detective</h2>
+                    <p class="text-gray-600 mt-2">
+                        Bella es una perrita inteligente que, junto a sus amigos, intenta resolver el misterio de las
+                        croquetas desaparecidas...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Bella')">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">La misión de Pepe, el loro curioso</h2>
+                    <p class="text-gray-600 mt-2">
+                        Pepe, un loro lleno de curiosidad, voló más allá de los árboles buscando un lugar misterioso al
+                        que siempre quiso ir...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Pepe')">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Sasha y la búsqueda del collar perdido</h2>
+                    <p class="text-gray-600 mt-2">
+                        Sasha, una gata astuta, perdió su collar favorito en el vecindario. Decidida, se embarca en una
+                        búsqueda para recuperarlo...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Sasha')">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Max y el misterio de la noche estrellada</h2>
+                    <p class="text-gray-600 mt-2">
+                        Max, el cachorro soñador, salió al jardín en una noche estrellada y descubrió un brillo
+                        misterioso detrás del árbol...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Max')">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Coco y el tesoro escondido</h2>
+                    <p class="text-gray-600 mt-2">
+                        Coco, el periquito juguetón, encontró un mapa en la jaula. Con ayuda de sus amigos, se dispuso a
+                        buscar el tesoro escondido...
+                    </p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                        onclick="showStory('Coco')">
+                        Leer más
+                    </button>
+                </div>
+
+            </main>
+
+        </section>
+
+        <section id="recursos" class="mb-6">
+            <div class="bg-blue-50 py-10 px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                  <h1 class="text-3xl font-bold text-blue-700 mb-4">Recursos para Padres</h1>
+                  <p class="text-gray-700 mb-8">Encuentra guías y recursos útiles para educar a tus hijos sobre el cuidado de las mascotas.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Guía Básica para el Cuidado de Mascotas</h2>
+                    <p class="text-gray-600 mt-2">Aprende los aspectos básicos del cuidado de mascotas, desde la alimentación hasta la higiene diaria.</p>                    
+                  </div>
+              
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Cómo Involucrar a los Niños en el Cuidado de Mascotas</h2>
+                    <p class="text-gray-600 mt-2">Consejos y actividades para que los niños participen activamente en el cuidado de su mascota.</p>                    
+                  </div>
+              
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Responsabilidades de Tener una Mascota</h2>
+                    <p class="text-gray-600 mt-2">Ayuda a tus hijos a entender las responsabilidades y el compromiso de tener una mascota en casa.</p>                    
+                  </div>
+              
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Cuidando Mascotas con Necesidades Especiales</h2>
+                    <p class="text-gray-600 mt-2">Información sobre el cuidado de mascotas con condiciones de salud especiales y cómo incluir a los niños en el proceso.</p>                    
+                  </div>
+              
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Cómo Presentar una Nueva Mascota a la Familia</h2>
+                    <p class="text-gray-600 mt-2">Guía paso a paso para que tus hijos se adapten a una nueva mascota en casa.</p>                    
+                  </div>
+              
+                  <!-- Tarjeta de recurso -->
+                  <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-blue-700">Cuidados y Seguridad para Mascotas al Aire Libre</h2>
+                    <p class="text-gray-600 mt-2">Aprende cómo enseñar a los niños a cuidar de sus mascotas en espacios al aire libre de manera segura.</p>                    
+                  </div>
+                </div>
+              </div>              
+        </section>
+    </main>
+    <div id="storyModal" class="hidden fixed inset-0 z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 max-w-lg w-full relative">
+          <button class="absolute top-4 right-4 text-gray-700" onclick="hideStory()">Cerrar</button>
+          <h2 id="storyTitle" class="text-2xl font-bold text-blue-700"></h2>
+          <p id="storyContent" class="mt-4 text-gray-700"></p>
+        </div>
+      </div>
+
+    <footer class="bg-purple-600 text-white text-center p-4">
+        <p>&copy; 2024 Cuidado Responsable de Mascotas. Todos los derechos reservados.</p>
+    </footer>
+    <script>
+        const stories = {
+            'Luna': 'Luna decidió salir al jardín. Entre las flores encontró una pequeña ardilla... (continúa con la historia).',
+            'Toby': 'El valiente Toby se acercó al lago, donde vio patos y peces... (continúa con la historia).',
+            'Rocky': 'Rocky, siempre inquieto, se escapó de casa en una mañana soleada. Al llegar al parque, descubrió un túnel oculto entre los arbustos. Sin pensarlo, se aventuró en él y descubrió un mundo de olores y sonidos nuevos, haciendo amigos en el camino y regresando a casa con una nueva historia para contar.',
+            'Bella': 'Bella, la perrita detective, notó que las croquetas de la cocina estaban desapareciendo misteriosamente. Con ayuda de su olfato y sus amigos del vecindario, siguió el rastro hasta un escondite secreto donde encontró a un gatito que necesitaba ayuda. Juntos se convirtieron en grandes amigos y Bella fue la heroína del día.',
+            'Pepe': 'Pepe siempre había soñado con cruzar el bosque. Un día, voló más allá de los árboles y llegó a un campo lleno de flores y frutos. Conoció a otros loros y compartieron historias sobre lugares lejanos. Pepe regresó a casa emocionado, listo para su próxima aventura.',
+            'Sasha': 'Sasha, la gata astuta, perdió su collar mientras cazaba mariposas. Decidida a encontrarlo, recorrió el vecindario preguntando a otros gatos y hasta a algunos perros. Finalmente, un cuervo le indicó dónde estaba, y Sasha regresó a casa con su collar y un nuevo respeto por los demás animales del vecindario.',
+            'Max': 'Max, en una noche estrellada, observó un destello detrás del árbol en el jardín. Decidido, salió a investigar y encontró un pequeño cristal que reflejaba la luz de la luna. Max lo llevó a casa como su "tesoro" y, desde entonces, siempre mira las estrellas, esperando descubrir más secretos.',
+            'Coco': 'Coco, el periquito juguetón, encontró un viejo mapa escondido en su jaula. Emocionado, convenció a sus amigos para emprender una búsqueda. Siguiendo pistas y cantando todo el camino, descubrieron que el "tesoro" era un escondite lleno de semillas frescas que alguien había dejado. Fue un festín inolvidable.'
+        };
+
+        function showStory(name) {
+            document.getElementById('storyTitle').textContent = name + ", la aventura de hoy";
+            document.getElementById('storyContent').textContent = stories[name];
+            document.getElementById('storyModal').classList.remove('hidden');
+        }
+
+        function hideStory() {
+            document.getElementById('storyModal').classList.add('hidden');
+        }
+        function toggleCard(animal) {
+            const container = document.querySelector(`.image-container[data-animal='${animal}']`);
+            container.classList.toggle('rotated');
+        }
+
+        // Generar puntos flotantes
+        const floatingPoints = document.getElementById('floating-points');
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8E44AD'];
+        for (let i = 0; i < 30; i++) {
+            const point = document.createElement('div');
+            point.classList.add('floating');
+            point.style.width = `${Math.random() * 20 + 5}px`;
+            point.style.height = point.style.width;
+            point.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            point.style.top = `${Math.random() * 100}vh`;
+            point.style.left = `${Math.random() * 100}vw`;
+            floatingPoints.appendChild(point);
+        }
+
+        // Carrusel
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('#carousel > div');
+        const totalSlides = slides.length;
+
+        function updateCarousel() {
+            const offset = -currentIndex * 100;
+            document.getElementById('carousel').style.transform = `translateX(${offset}%)`;
+        }
+
+        document.getElementById('next').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateCarousel();
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        });
+
+        // Menú fijo
+        const nav = document.querySelector('nav');
+        let scrollPosition = 0;
+
+        window.addEventListener('scroll', () => {
+            scrollPosition = window.scrollY;
+            if (scrollPosition > 0) {
+                nav.classList.add('fixed-menu');
+            } else {
+                nav.classList.remove('fixed-menu');
+            }
+        });
+    </script>
+</body>
+
+</html>
